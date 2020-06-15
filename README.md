@@ -14,7 +14,7 @@ insert into mybook values (3, 'テスト3');
 ```
 ## 各ファイル説明
 
-- src/main/resources/build.gradle
+- src/main/resources/build.gradle  
 jpaとpostgresql(jdbc?)を追加
 ```
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -26,8 +26,8 @@ jpaとpostgresql(jdbc?)を追加
   
 ## 参考
 
-pureなSQL記載方法
+pureなSQL記載方法  
 https://qiita.com/rennnosuke/items/2d3a06ac5a755c656d4b
 
-Lombok
+Lombok  
 https://qiita.com/opengl-8080/items/671ffd4bf84fe5e32557
