@@ -49,14 +49,12 @@ public class UploadController {
         }
 
         // ==== SuperCsvを使用 ====
-        ICsvListReader listReader = null;
-        try {
+        try (
             InputStream stream = file.getInputStream();
             Reader reader = new InputStreamReader(stream);
-            listReader = new CsvListReader(
-                    reader,
-                    CsvPreference.EXCEL_PREFERENCE);
-
+            ICsvListReader listReader = new CsvListReader(
+                    reader, CsvPreference.EXCEL_PREFERENCE);
+        ) {
             List<String> list = null;
             while ((list = listReader.read()) != null) {
                 System.out.println("1列目" + list.get(0));
@@ -65,16 +63,7 @@ public class UploadController {
         } catch (Exception e) {
             // 異常終了
             e.printStackTrace();
-        } finally {
-            try {
-                // CSVファイルを閉じる
-                if (listReader != null) listReader.close();
-            } catch (Exception e) {
-                // 異常終了
-                e.printStackTrace();
-            }
         }
-
         System.out.println("★★★test post end★★★");
         return "uploadForm";
     }
