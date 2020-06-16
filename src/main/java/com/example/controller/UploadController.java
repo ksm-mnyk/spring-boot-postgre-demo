@@ -8,17 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.supercsv.encoder.CsvEncoder;
 import org.supercsv.io.CsvListReader;
-import org.supercsv.io.CsvListWriter;
 import org.supercsv.io.ICsvListReader;
-import org.supercsv.io.ICsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
 
 @Controller
 @RequestMapping("/test")
@@ -52,29 +49,30 @@ public class UploadController {
         }
 
         // ==== SuperCsvを使用 ====
+        ICsvListReader listReader = null;
         try {
             InputStream stream = file.getInputStream();
             Reader reader = new InputStreamReader(stream);
-            ICsvListReader listReader = new CsvListReader(
+            listReader = new CsvListReader(
                     reader,
                     CsvPreference.EXCEL_PREFERENCE);
 
-//
-//            // 一行ずつ読み込み
-//            while ((line = listReader.read()) != null) {
-//                // nullを空文字に置き換える
-//                for (int i = 0; i < line.size(); i++)
-//                    if (line.get(i) == null)
-//                        line.set(i, "");
-//
-//                csvList.add(new ArrayList<String>(line));
-//            }
-            // CSVファイルを閉じる
-            listReader.close();
-
+            List<String> list = null;
+            while ((list = listReader.read()) != null) {
+                System.out.println("1列目" + list.get(0));
+                System.out.println("2列目" + list.get(1));
+            }
         } catch (Exception e) {
             // 異常終了
             e.printStackTrace();
+        } finally {
+            try {
+                // CSVファイルを閉じる
+                if (listReader != null) listReader.close();
+            } catch (Exception e) {
+                // 異常終了
+                e.printStackTrace();
+            }
         }
 
         System.out.println("★★★test post end★★★");
