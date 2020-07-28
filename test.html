@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
+    <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+    <script>
+        $(function ($) {
+            // テストデータ ※実際はajaxで取得。
+            const testData1 = {
+                data: [
+                    { "id": 1, "name": "北海道" },
+                    { "id": 2, "name": "青森県" },
+                    { "id": 31, "name": "岩手県" },
+                    { "id": 4, "name": "宮城県" },
+                    { "id": 5, "name": "秋田県" },
+                ],
+                //iTotalRecords: 20, // フィルタ前の件数（全件数）⇒いらないような・・・
+                iTotalDisplayRecords: 3000000, // フィルタ後の件数
+            }
+            // DataTable設定
+            let table = $("#data-tables").DataTable({                
+                searching: false,// 検索ボックスを非表示
+                paging: true,// ページングを非表示                
+                info: true,// 左下の情報を非表示
+                processing: true, // Loadingを表示
+                // ソート設定（初期）
+                order: [ 
+                    [0, "asc"],[1, "desc"]
+                ],
+                aoColumns: [
+                    { mData: "id", sDefaultContent: "" },
+                    { mData: "name", sDefaultContent: "" },
+                ],
+                // Ajax 呼び出し中に処理中の表示
+                bProcessing: true,
+                // サーバーと通信が発生するか否か
+                bServerSide: true,
+                // trueにするとAjax通信を非同期で行う。
+                bDeferRender: false,
+                // 省略した場合のデフォルト値は「aaData」。restApiを呼び出す後の戻り値
+                sAjaxDataProp: "data",
+                // Ajax呼出関数
+                fnServerData: function (sSource, aoData, fnCallback, oSettings) {
+                    let order = aoData[2]["value"]; // ソート条件
+                    let start = aoData[3]["value"]; // 開始位置（ページ数でなく番号）
+                    let length = aoData[4]["value"];// 画面表示数(左上の)
+                    let pageNo = start / length + 1;// ページ番号 ＝ 開始位置 / 画面表示数 + 1
+                    // console.log("aoData: ", aoData)
+                    // ↓このあたりを加工してajaxのパラメータで渡す。
+                    console.log("order: ", order)
+                    // TODO ソートはpushしていく
+                    console.log("length: ", length)
+                    console.log("pageNo: ", pageNo)
+                    $.ajax({
+                        type: "GET",
+                        url: "https://jsondata.okiba.me/v1/json/EZpLv200728170312",
+                        data: "name=John&location=Boston",
+                        success: function (data) {
+                            console.log(data)                 
+                            // ajaxの戻りを以下の形になるように加工する
+                            // {
+                            //     data: [
+                            //         { "id": 1, "name": "北海道" },
+                            //         { "id": 2, "name": "青森県" },
+                            //     ],
+                            //     iTotalRecords: 20, // フィルタ前の件数（全件数）⇒いらないような・・・
+                            //     iTotalDisplayRecords: 30, // フィルタ後の件数
+                            // }
+                            let result = {
+                                data: data["data"],
+                                iTotalDisplayRecords: data["totalRecord"]
+                            };
+                            console.log(result)
+                            fnCallback(result);
+                        },
+                        error: function() {
+                            alert("データ取得失敗");
+                            const initData = { data : [] }
+                            return fnCallback(initData);
+                        }
+                    });
+                },
+                // 初期化後の処理
+                initComplete: function (settings, json) {
+                    // $('#data-tables th').click(function (e) {
+                    //     cnsole.log('ヘッダークリック！！！')
+                    //     // TODO ソートの処理
+                    // });
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div style="padding: 30px;">
+        <table id="data-tables" class="table table-bordered">
+            <!-- theadのみ -->
+            <thead>
+                <tr>
+                    <th id='no'>No</th>
+                    <th id='name'>名前</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+</body>
+
+</html>

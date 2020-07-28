@@ -1,20 +1,27 @@
 package com.example.controller;
 
+
+
+
+import org.springframework.mock.web.MockMultipartFile;
+
+
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.List;
 
 @Controller
@@ -27,9 +34,29 @@ public class UploadController {
         return "uploadForm";
     }
     @PostMapping("")
-    public String handleFileUpload(@RequestParam("testfile") MultipartFile file,
+    public String handleFileUpload(@RequestParam("testfile") MultipartFile file1,
                                    RedirectAttributes redirectAttributes) {
         System.out.println("★★★test post start★★★");
+
+        File file = new File("src/test/resources/input.txt");
+        try (
+            FileInputStream input = new FileInputStream(file);
+         ) {
+            MultipartFile multipartFile = new MockMultipartFile(file.getName(), input);
+
+            // ここでサービスを呼び出すテストを記載
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain", IOUtils.toByteArray(input));
+
+
+
 
         // ==== 文字列で取得 ====
         // ファイル名出力

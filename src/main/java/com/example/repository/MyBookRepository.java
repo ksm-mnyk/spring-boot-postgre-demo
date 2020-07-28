@@ -12,4 +12,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Integer> {
 
     @Query(value="SELECT MAX(id) AS id FROM mybook", nativeQuery = true)
     Optional<Integer> findByMaxId();
+
+    List<MyBook> findByName(String name);
+
 }
