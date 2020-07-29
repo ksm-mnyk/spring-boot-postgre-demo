@@ -79,7 +79,7 @@
                     }).fail(function() {
                         alert("データ取得失敗");
                         // 失敗時は空データをテーブルに設定
-                        return fnCallback({data:[], iTotalDisplayRecords: 0});
+                        fnCallback({data:[], iTotalDisplayRecords: 0});
                     });
                 },
             });
